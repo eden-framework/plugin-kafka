@@ -22,7 +22,7 @@ func (g *GenerationPlugin) GenerateEntryPoint(opt plugins.Option, cwd string) st
 func (g *GenerationPlugin) GenerateFilePoint(opt plugins.Option, cwd string) []*plugins.FileTemplate {
 	file := plugins.NewFileTemplate("global", path.Join(cwd, "internal/global/kafka.go"))
 	file.WithBlock(`
-var RedisConfig = struct {
+var KafkaConfig = struct {
 	Producer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
 	Consumer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
 }{
