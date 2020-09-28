@@ -15,19 +15,26 @@ func (g *GenerationPlugin) GenerateEntryPoint(opt plugins.Option, cwd string) st
 	globalPkgPath := path.Join(opt.PackageName, "internal/global")
 	globalFilePath := path.Join(cwd, "internal/global")
 	tpl := fmt.Sprintf(`,
-		{{ .UseWithoutAlias "github.com/eden-framework/eden-framework/pkg/application" "" }}.WithConfig(&{{ .UseWithoutAlias "%s" "%s" }}.RedisConfig)`, globalPkgPath, globalFilePath)
+		{{ .UseWithoutAlias "github.com/eden-framework/eden-framework/pkg/application" "" }}.WithConfig(&{{ .UseWithoutAlias "%s" "%s" }}.KafkaConfig)`, globalPkgPath, globalFilePath)
 	return tpl
 }
 
 func (g *GenerationPlugin) GenerateFilePoint(opt plugins.Option, cwd string) []*plugins.FileTemplate {
-	file := plugins.NewFileTemplate("global", path.Join(cwd, "internal/global/redis.go"))
+	file := plugins.NewFileTemplate("global", path.Join(cwd, "internal/global/kafka.go"))
 	file.WithBlock(`
 var RedisConfig = struct {
-	Redis *{{ .UseWithoutAlias "github.com/eden-framework/plugin-redis/redis" "" }}.Redis
+	Producer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
+	Consumer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
 }{
-	Redis: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-redis/redis" "" }}.Redis{
-		Host: "localhost",
-		Port: 6379,
+	Producer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
+		Host:  "localhost",
+		Port:  9092,
+		Topic: "default",
+	},
+	Consumer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
+		Brokers: []string{"localhost:9092"},
+		Topic:   "default",
+		GroupID: "default_group",
 	},
 }
 `)
