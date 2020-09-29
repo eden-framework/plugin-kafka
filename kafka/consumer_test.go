@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
-	"github.com/segmentio/kafka-go"
+	"github.com/eden-framework/common"
 	"testing"
 )
 
@@ -45,9 +45,9 @@ func TestTwoConsumer(t *testing.T) {
 
 	go func() {
 		var receivedNum uint32
-		err := c1.Consume(context.Background(), func(m kafka.Message) error {
+		err := c1.Consume(context.Background(), func(m common.QueueMessage) error {
 			receivedNum++
-			fmt.Printf("[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Value))
+			fmt.Printf("[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Val))
 			return nil
 		})
 		if err != nil {
@@ -57,9 +57,9 @@ func TestTwoConsumer(t *testing.T) {
 
 	go func() {
 		var receivedNum uint32
-		err := c2.Consume(context.Background(), func(m kafka.Message) error {
+		err := c2.Consume(context.Background(), func(m common.QueueMessage) error {
 			receivedNum++
-			fmt.Printf("\t[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Value))
+			fmt.Printf("\t[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Val))
 			return nil
 		})
 		if err != nil {

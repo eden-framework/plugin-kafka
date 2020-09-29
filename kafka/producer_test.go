@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"github.com/eden-framework/common"
 	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/segmentio/kafka-go"
 	"testing"
@@ -40,11 +41,11 @@ func TestProduce(t *testing.T) {
 	}
 	p.Init()
 
-	messages := make([]kafka.Message, 0)
+	messages := make([]common.QueueMessage, 0)
 	for i := 0; i < 1000; i++ {
-		messages = append(messages, kafka.Message{
-			Key:   []byte(tools.RandomString("", 10)),
-			Value: []byte(fmt.Sprintf("bar%d", i+1)),
+		messages = append(messages, common.QueueMessage{
+			Key: []byte(tools.RandomString("", 10)),
+			Val: []byte(fmt.Sprintf("bar%d", i+1)),
 		})
 	}
 	err := p.Produce(context.Background(), messages...)

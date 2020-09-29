@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"github.com/eden-framework/common"
 	"github.com/profzone/envconfig"
 	"github.com/segmentio/kafka-go"
 	"net"
@@ -65,8 +66,8 @@ func (p *Producer) Init() {
 	}
 }
 
-func (p *Producer) Produce(ctx context.Context, messages ...kafka.Message) error {
-	return p.w.WriteMessages(ctx, messages...)
+func (p *Producer) Produce(ctx context.Context, messages ...common.QueueMessage) error {
+	return p.w.WriteMessages(ctx, unwrapKafkaMessages(messages)...)
 }
 
 func newBalancer(t BalancerType) kafka.Balancer {

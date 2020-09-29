@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"github.com/eden-framework/common"
 	"github.com/profzone/envconfig"
 	"github.com/segmentio/kafka-go"
 	"time"
@@ -69,7 +70,7 @@ func (c *Consumer) Init() {
 	})
 }
 
-func (c *Consumer) Consume(ctx context.Context, handler func(m kafka.Message) error) error {
+func (c *Consumer) Consume(ctx context.Context, handler func(m common.QueueMessage) error) error {
 Run:
 	for {
 		select {
@@ -81,7 +82,7 @@ Run:
 				return err
 			}
 
-			err = handler(m)
+			err = handler(wrapKafkaMessage(m))
 			if err != nil {
 				continue
 			}
