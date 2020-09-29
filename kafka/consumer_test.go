@@ -45,7 +45,7 @@ func TestTwoConsumer(t *testing.T) {
 
 	go func() {
 		var receivedNum uint32
-		err := c1.ReadMessage(context.Background(), func(m kafka.Message) error {
+		err := c1.Consume(context.Background(), func(m kafka.Message) error {
 			receivedNum++
 			fmt.Printf("[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Value))
 			return nil
@@ -57,7 +57,7 @@ func TestTwoConsumer(t *testing.T) {
 
 	go func() {
 		var receivedNum uint32
-		err := c2.ReadMessage(context.Background(), func(m kafka.Message) error {
+		err := c2.Consume(context.Background(), func(m kafka.Message) error {
 			receivedNum++
 			fmt.Printf("\t[%d] message of offset %d: %s = %s\n", receivedNum, m.Offset, string(m.Key), string(m.Value))
 			return nil

@@ -65,7 +65,7 @@ func (p *Producer) Init() {
 	}
 }
 
-func (p *Producer) WriteMessage(ctx context.Context, messages ...kafka.Message) error {
+func (p *Producer) Produce(ctx context.Context, messages ...kafka.Message) error {
 	return p.w.WriteMessages(ctx, messages...)
 }
 

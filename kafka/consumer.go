@@ -69,7 +69,7 @@ func (c *Consumer) Init() {
 	})
 }
 
-func (c *Consumer) ReadMessage(ctx context.Context, handler func(m kafka.Message) error) error {
+func (c *Consumer) Consume(ctx context.Context, handler func(m kafka.Message) error) error {
 Run:
 	for {
 		select {

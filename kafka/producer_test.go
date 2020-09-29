@@ -47,7 +47,7 @@ func TestProduce(t *testing.T) {
 			Value: []byte(fmt.Sprintf("bar%d", i+1)),
 		})
 	}
-	err := p.w.WriteMessages(context.Background(), messages...)
+	err := p.Produce(context.Background(), messages...)
 
 	if err != nil {
 		t.Fatal(err)
