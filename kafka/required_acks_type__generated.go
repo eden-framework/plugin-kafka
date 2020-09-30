@@ -5,13 +5,13 @@ import (
 	"encoding"
 	"errors"
 
-	github_com_eden_framework_eden_framework_pkg_enumeration "github.com/eden-framework/eden-framework/pkg/enumeration"
+	github_com_eden_framework_enumeration "github.com/eden-framework/enumeration"
 )
 
 var InvalidRequiredAcksType = errors.New("invalid RequiredAcksType")
 
 func init() {
-	github_com_eden_framework_eden_framework_pkg_enumeration.RegisterEnums("RequiredAcksType", map[string]string{
+	github_com_eden_framework_enumeration.RegisterEnums("RequiredAcksType", map[string]string{
 		"ALL":  "all",
 		"ONE":  "one",
 		"NONE": "none",

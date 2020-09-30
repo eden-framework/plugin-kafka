@@ -5,13 +5,13 @@ import (
 	"encoding"
 	"errors"
 
-	github_com_eden_framework_eden_framework_pkg_enumeration "github.com/eden-framework/eden-framework/pkg/enumeration"
+	github_com_eden_framework_enumeration "github.com/eden-framework/enumeration"
 )
 
 var InvalidBalancerType = errors.New("invalid BalancerType")
 
 func init() {
-	github_com_eden_framework_eden_framework_pkg_enumeration.RegisterEnums("BalancerType", map[string]string{
+	github_com_eden_framework_enumeration.RegisterEnums("BalancerType", map[string]string{
 		"MURMUR2":     "murmur2",
 		"CRC32":       "crc32",
 		"HASH":        "hash",
