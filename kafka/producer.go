@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"github.com/cornelk/hashmap"
 	"github.com/eden-framework/common"
 	"github.com/profzone/envconfig"
 	"github.com/segmentio/kafka-go"
@@ -13,7 +14,6 @@ import (
 type Producer struct {
 	Host         string
 	Port         int
-	Topic        string
 	BalancerType BalancerType
 	MaxAttempts  int
 	BatchSize    int
@@ -23,15 +23,14 @@ type Producer struct {
 	WriteTimeout envconfig.Duration
 	RequiredAcks RequiredAcksType
 	Async        bool
-	w            *kafka.Writer
+
+	resolvedAddr net.Addr
+	topicWriter  *hashmap.HashMap
 }
 
 func (p *Producer) SetDefaults() {
 	if p.Host == "" {
 		panic("kafka.Producer must set a broker Host")
-	}
-	if p.Topic == "" {
-		panic("kafka.Producer must set a topic")
 	}
 
 	if p.Port == 0 {
@@ -40,34 +39,53 @@ func (p *Producer) SetDefaults() {
 }
 
 func (p *Producer) Init() {
-	if p.w != nil {
+	if p.topicWriter != nil {
 		return
 	}
 
 	p.SetDefaults()
 
+	var err error
 	addr := fmt.Sprintf("%s:%d", p.Host, p.Port)
-	resolvedAddr, err := net.ResolveTCPAddr("tcp", addr)
+	p.resolvedAddr, err = net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
 		panic(fmt.Sprintf("kafka address [%s] resolve failed: %v", addr, err))
 	}
-	p.w = &kafka.Writer{
-		Addr:         resolvedAddr,
-		Topic:        p.Topic,
-		Balancer:     newBalancer(p.BalancerType),
-		MaxAttempts:  p.MaxAttempts,
-		BatchSize:    p.BatchSize,
-		BatchBytes:   p.BatchBytes,
-		BatchTimeout: time.Duration(p.BatchTimeout),
-		ReadTimeout:  time.Duration(p.ReadTimeout),
-		WriteTimeout: time.Duration(p.WriteTimeout),
-		RequiredAcks: newRequiredAcks(p.RequiredAcks),
-		Async:        p.Async,
+	p.topicWriter = hashmap.New(10)
+}
+
+func (p *Producer) newWriterWithTopic(topic string) (writer *kafka.Writer) {
+	item, ok := p.topicWriter.Get(topic)
+	if !ok {
+		writer = &kafka.Writer{
+			Addr:         p.resolvedAddr,
+			Topic:        topic,
+			Balancer:     newBalancer(p.BalancerType),
+			MaxAttempts:  p.MaxAttempts,
+			BatchSize:    p.BatchSize,
+			BatchBytes:   p.BatchBytes,
+			BatchTimeout: time.Duration(p.BatchTimeout),
+			ReadTimeout:  time.Duration(p.ReadTimeout),
+			WriteTimeout: time.Duration(p.WriteTimeout),
+			RequiredAcks: newRequiredAcks(p.RequiredAcks),
+			Async:        p.Async,
+		}
+		p.topicWriter.Insert(topic, writer)
+	} else {
+		writer = item.(*kafka.Writer)
 	}
+
+	return
 }
 
 func (p *Producer) Produce(ctx context.Context, messages ...common.QueueMessage) error {
-	return p.w.WriteMessages(ctx, unwrapKafkaMessages(messages)...)
+	for _, m := range messages {
+		writer := p.newWriterWithTopic(m.Topic)
+		if err := writer.WriteMessages(ctx, unwrapKafkaMessage(m)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func newBalancer(t BalancerType) kafka.Balancer {

@@ -11,7 +11,6 @@ import (
 type Consumer struct {
 	Brokers                []string
 	GroupID                string
-	Topic                  string
 	Partition              int
 	QueueCapacity          int
 	MinBytes               int
@@ -30,24 +29,54 @@ type Consumer struct {
 	ReadBackoffMin         envconfig.Duration
 	ReadBackoffMax         envconfig.Duration
 	MaxAttempts            int
-
-	r *kafka.Reader
 }
 
 func (c *Consumer) SetDefaults() {
 	if len(c.Brokers) == 0 {
 		panic("kafka.Consumer must set a broker list")
 	}
-	if c.Topic == "" {
-		panic("kafka.Consumer must set a topic")
-	}
 }
 
 func (c *Consumer) Init() {
-	c.r = kafka.NewReader(kafka.ReaderConfig{
+	c.SetDefaults()
+}
+
+func (c *Consumer) Consume(ctx context.Context, topic string, handler func(m common.QueueMessage) error) error {
+	reader := c.newReader(topic)
+	defer reader.Close()
+Run:
+	for {
+		select {
+		case <-ctx.Done():
+			break Run
+		default:
+			m, err := reader.FetchMessage(ctx)
+			if err != nil {
+				return err
+			}
+
+			err = handler(wrapKafkaMessage(m))
+			if err != nil {
+				continue
+			}
+
+			if c.GroupID != "" {
+				err = reader.CommitMessages(ctx, m)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *Consumer) newReader(topic string) (reader *kafka.Reader) {
+	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:         c.Brokers,
 		GroupID:         c.GroupID,
-		Topic:           c.Topic,
+		Topic:           topic,
 		Partition:       c.Partition,
 		QueueCapacity:   c.QueueCapacity,
 		MinBytes:        c.MinBytes,
@@ -68,33 +97,4 @@ func (c *Consumer) Init() {
 		ReadBackoffMax:         time.Duration(c.ReadBackoffMax),
 		MaxAttempts:            c.MaxAttempts,
 	})
-}
-
-func (c *Consumer) Consume(ctx context.Context, handler func(m common.QueueMessage) error) error {
-Run:
-	for {
-		select {
-		case <-ctx.Done():
-			break Run
-		default:
-			m, err := c.r.FetchMessage(ctx)
-			if err != nil {
-				return err
-			}
-
-			err = handler(wrapKafkaMessage(m))
-			if err != nil {
-				continue
-			}
-
-			if c.GroupID != "" {
-				err = c.r.CommitMessages(ctx, m)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	return nil
 }
