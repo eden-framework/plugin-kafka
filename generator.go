@@ -29,12 +29,9 @@ var KafkaConfig = struct {
 	Producer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
 		Host:  "localhost",
 		Port:  9092,
-		Topic: "default",
 	},
 	Consumer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
 		Brokers: []string{"localhost:9092"},
-		Topic:   "default",
-		GroupID: "default_group",
 	},
 }
 `)

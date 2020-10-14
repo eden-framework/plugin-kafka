@@ -35,17 +35,17 @@ func TestDeleteTopic(t *testing.T) {
 
 func TestProduce(t *testing.T) {
 	p := &Producer{
-		Host:  "127.0.0.1",
-		Port:  9092,
-		Topic: "test-B",
+		Host: "127.0.0.1",
+		Port: 9092,
 	}
 	p.Init()
 
 	messages := make([]common.QueueMessage, 0)
 	for i := 0; i < 1000; i++ {
 		messages = append(messages, common.QueueMessage{
-			Key: []byte(tools.RandomString("", 10)),
-			Val: []byte(fmt.Sprintf("bar%d", i+1)),
+			Topic: "test-B",
+			Key:   []byte(tools.RandomString("", 10)),
+			Val:   []byte(fmt.Sprintf("bar%d", i+1)),
 		})
 	}
 	err := p.Produce(context.Background(), messages...)
