@@ -10,14 +10,14 @@ import (
 )
 
 func TestCreateTopic(t *testing.T) {
-	conn, err := kafka.DialLeader(context.Background(), "tcp", "localhost:9092", "test-B", 0)
+	conn, err := kafka.DialLeader(context.Background(), "tcp", "localhost:9092", "default", 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer conn.Close()
 	topicConfigs := []kafka.TopicConfig{
-		kafka.TopicConfig{
-			Topic:             "test-B",
+		{
+			Topic:             "default",
 			NumPartitions:     3,
 			ReplicationFactor: 3,
 		},

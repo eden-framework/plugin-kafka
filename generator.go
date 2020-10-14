@@ -23,14 +23,14 @@ func (g *GenerationPlugin) GenerateFilePoint(opt plugins.Option, cwd string) []*
 	file := plugins.NewFileTemplate("global", path.Join(cwd, "internal/global/kafka.go"))
 	file.WithBlock(`
 var KafkaConfig = struct {
-	Producer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
-	Consumer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
+	KafkaProducer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
+	KafkaConsumer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
 }{
-	Producer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
+	KafkaProducer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
 		Host:  "localhost",
 		Port:  9092,
 	},
-	Consumer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
+	KafkaConsumer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
 		Brokers: []string{"localhost:9092"},
 	},
 }
