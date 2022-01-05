@@ -3,8 +3,8 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"gitee.com/eden-framework/common"
 	"github.com/cornelk/hashmap"
-	"github.com/eden-framework/common"
 	"github.com/profzone/envconfig"
 	"github.com/segmentio/kafka-go"
 	"net"

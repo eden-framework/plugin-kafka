@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"github.com/eden-framework/common"
+	"gitee.com/eden-framework/common"
 	"github.com/segmentio/kafka-go"
 )
 

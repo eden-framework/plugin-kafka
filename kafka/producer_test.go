@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
-	"github.com/eden-framework/common"
+	"gitee.com/eden-framework/common"
 	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/segmentio/kafka-go"
 	"testing"

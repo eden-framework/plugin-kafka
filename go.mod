@@ -1,12 +1,12 @@
-module github.com/eden-framework/plugin-kafka
+module gitee.com/eden-framework/plugin-kafka
 
-go 1.14
+go 1.16
 
 require (
+	gitee.com/eden-framework/common v0.0.4
+	gitee.com/eden-framework/enumeration v1.0.1
+	gitee.com/eden-framework/plugins v0.0.7
 	github.com/cornelk/hashmap v1.0.1
-	github.com/eden-framework/common v0.0.1
-	github.com/eden-framework/enumeration v1.0.0
-	github.com/eden-framework/plugins v0.0.6
 	github.com/gophercloud/gophercloud v0.0.0-20190126172459-c818fa66e4c8
 	github.com/profzone/envconfig v1.4.6
 	github.com/segmentio/kafka-go v0.4.2

@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"context"
-	"github.com/eden-framework/common"
+	"gitee.com/eden-framework/common"
 	"github.com/profzone/envconfig"
 	"github.com/segmentio/kafka-go"
 	"time"

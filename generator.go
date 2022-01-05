@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/eden-framework/plugins"
+	"gitee.com/eden-framework/plugins"
 	"path"
 )
 
@@ -15,7 +15,7 @@ func (g *GenerationPlugin) GenerateEntryPoint(opt plugins.Option, cwd string) st
 	globalPkgPath := path.Join(opt.PackageName, "internal/global")
 	globalFilePath := path.Join(cwd, "internal/global")
 	tpl := fmt.Sprintf(`,
-		{{ .UseWithoutAlias "github.com/eden-framework/eden-framework/pkg/application" "" }}.WithConfig(&{{ .UseWithoutAlias "%s" "%s" }}.KafkaConfig)`, globalPkgPath, globalFilePath)
+		{{ .UseWithoutAlias "gitee.com/eden-framework/eden-framework/pkg/application" "" }}.WithConfig(&{{ .UseWithoutAlias "%s" "%s" }}.KafkaConfig)`, globalPkgPath, globalFilePath)
 	return tpl
 }
 
@@ -23,14 +23,14 @@ func (g *GenerationPlugin) GenerateFilePoint(opt plugins.Option, cwd string) []*
 	file := plugins.NewFileTemplate("global", path.Join(cwd, "internal/global/kafka.go"))
 	file.WithBlock(`
 var KafkaConfig = struct {
-	KafkaProducer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
-	KafkaConsumer *{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
+	KafkaProducer *{{ .UseWithoutAlias "gitee.com/eden-framework/plugin-kafka/kafka" "" }}.Producer
+	KafkaConsumer *{{ .UseWithoutAlias "gitee.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer
 }{
-	KafkaProducer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
+	KafkaProducer: &{{ .UseWithoutAlias "gitee.com/eden-framework/plugin-kafka/kafka" "" }}.Producer{
 		Host:  "localhost",
 		Port:  9092,
 	},
-	KafkaConsumer: &{{ .UseWithoutAlias "github.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
+	KafkaConsumer: &{{ .UseWithoutAlias "gitee.com/eden-framework/plugin-kafka/kafka" "" }}.Consumer{
 		Brokers: []string{"localhost:9092"},
 	},
 }
